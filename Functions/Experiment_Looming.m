@@ -10,20 +10,15 @@ function Experiment_Looming(varargin)
 % handle user pressing the stop experiment button in the main GUI
 % 5/14/2019 - Allow user to define event duration
 
-%% Addpath of sub-dirs from the parent dir of this file
-addpath(genpath(fileparts(mfilename('fullpath'))));
-
 %% Parse varargin for duration
 if nargin == 0
     baseline_dur = 10;
-    sound_dur = 10;
     post_dur = 10;
-elseif nargin == 3
+elseif nargin == 2
     baseline_dur = varargin{1};
-    sound_dur = varargin{2};
-    post_dur = varargin{3};
+    post_dur = varargin{2};
 else
-    error('Requires either 0 or 3 input arguments for duration.');
+    error('Requires either 0 or 2 input arguments for duration.');
 end
 
 %% Set-up client 1 connections
@@ -33,19 +28,6 @@ session1_client = Client1_ConnectToGP3;
 % Tell Client 2 that Client 1 is ready
 Client1_SendReadyMsg(session1_client);
 
-%% Set up audio for left and right channels
-audiotypes = {'approaching','receding','constant'};
-frequencies = {'500','1000','1500','2000'};
-
-for i=1:numel(audiotypes)
-    for j=1:numel(frequencies)
-        filename = [audiotypes{i} '_' frequencies{j} '.wav'];
-        [y.both.([audiotypes{i} '_' frequencies{j}]), Fs] = audioread(filename);
-        y.left.([audiotypes{i} '_' frequencies{j}]) = [y.both.([audiotypes{i} '_' frequencies{j}]) zeros(length(y.both.([audiotypes{i} '_' frequencies{j}])),1)];
-        y.right.([audiotypes{i} '_' frequencies{j}]) = [zeros(length(y.both.([audiotypes{i} '_' frequencies{j}])),1) y.both.([audiotypes{i} '_' frequencies{j}])];
-    end
-end
-
 %% Run Experiment
 run_count = 0;
 while 1
@@ -54,7 +36,44 @@ while 1
     switch current_user_data_parsed{1}
         case 'START'
             % Retrieve the hand selected by user and convert to lowercase
-            hand = lower(current_user_data_parsed{2});
+            ear = lower(current_user_data_parsed{2});
+            tone_type = lower(current_user_data_parsed{3});
+            tone_freq = str2double(current_user_data_parsed{4});
+            tone_dur = str2double(current_user_data_parsed{5});
+            
+            % Set up the audio wave
+            Fs = 20100; %sampling rate
+            Ts = 1/Fs;
+            T = 1:Ts:tone_dur;
+            
+            looming_multiplier = [0:1/numel(T):1-1/numel(T)]';  %weighting to create looming effect
+            click_eliminator = [0:1/200:1 ones(1,numel(T)-402) flip(0:1/200:1)]'; %weighting to eliminate edge clicking
+            
+            y = sin(2*pi*tone_freq*T);  %sinuoisodal wave form for given frequency
+            
+            
+            % Process tones
+            y = y';                 %first, transpose y
+            y = y.*click_eliminator;        % remove edge clicks
+            
+            switch tone_type
+                case 'constant'
+                    % no need to multiply waveform
+                case 'looming'
+                    y = looming_multiplier.*y;
+                case 'receding'
+                    y = flip(looming_multiplier).*y;
+            end
+            switch ear
+                case 'both'
+                    % leave y alone
+                case 'left'
+                    % append an empty right channel
+                    y = [y zeros(length(y),1)];
+                case 'right'
+                    % append an empty left channel
+                    y = [zeros(length(y),1) y];
+            end
             
             run_count = run_count+1;
             fprintf(['\nRUN ' num2str(run_count)])
@@ -64,12 +83,11 @@ while 1
             Client1_SendMessages(session1_client,'BASELINE');            
             if Client1_PauseForDurationOrStopExperiment(session1_client,baseline_dur) == 1; continue; end % continues if this function returns 1 (meaning user pressed Stop Experiment button)
             
-            sound(y.(hand),Fs)
-            Client1_SendMessages(session1_client,'SQUEEZE');            
-            if Client1_PauseForDurationOrStopExperiment(session1_client,sound_dur) == 1; continue; end
+            soundsc(y,Fs)
+            Client1_SendMessages(session1_client,'AUDIO');            
+            if Client1_PauseForDurationOrStopExperiment(session1_client,tone_dur) == 1; continue; end
             
-            sound(y.(hand),Fs)
-            Client1_SendMessages(session1_client,'RELAX');
+            Client1_SendMessages(session1_client,'POST_AUDIO');
             if Client1_PauseForDurationOrStopExperiment(session1_client,post_dur) == 1; continue; end
                                 
             Client1_SendMessages(session1_client,'STOP_RECORDING');   
