@@ -5,10 +5,6 @@ function Experiment_Looming(varargin)
 %
 %Author: Ringo Huang (ringohua@usc.edu)
 %Created: 4/30/2019
-%
-% 5/14/2019 - Implemented Client1_PauseForDurationOrStopExperiment to
-% handle user pressing the stop experiment button in the main GUI
-% 5/14/2019 - Allow user to define event duration
 
 %% Parse varargin for duration
 if nargin == 0
@@ -40,40 +36,9 @@ while 1
             tone_type = lower(current_user_data_parsed{3});
             tone_freq = str2double(current_user_data_parsed{4});
             tone_dur = str2double(current_user_data_parsed{5});
+            Fs = 20100; %Tone sampling rate
             
-            % Set up the audio wave
-            Fs = 20100; %sampling rate
-            Ts = 1/Fs;
-            T = 1:Ts:tone_dur;
-            
-            looming_multiplier = [0:1/numel(T):1-1/numel(T)]';  %weighting to create looming effect
-            click_eliminator = [0:1/200:1 ones(1,numel(T)-402) flip(0:1/200:1)]'; %weighting to eliminate edge clicking
-            
-            y = sin(2*pi*tone_freq*T);  %sinuoisodal wave form for given frequency
-            
-            
-            % Process tones
-            y = y';                 %first, transpose y
-            y = y.*click_eliminator;        % remove edge clicks
-            
-            switch tone_type
-                case 'constant'
-                    % no need to multiply waveform
-                case 'looming'
-                    y = looming_multiplier.*y;
-                case 'receding'
-                    y = flip(looming_multiplier).*y;
-            end
-            switch ear
-                case 'both'
-                    % leave y alone
-                case 'left'
-                    % append an empty right channel
-                    y = [y zeros(length(y),1)];
-                case 'right'
-                    % append an empty left channel
-                    y = [zeros(length(y),1) y];
-            end
+            [y,Fs] = GenerateTone(tone_type,tone_freq,tone_dur,ear,Fs);
             
             run_count = run_count+1;
             fprintf(['\nRUN ' num2str(run_count)])
