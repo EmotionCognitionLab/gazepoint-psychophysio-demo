@@ -1,4 +1,4 @@
-function Experiment_TwoTones(varargin)
+function Experiment_TwoTones
 %This is the equivalent of the experiment script for a looming task that
 %connects to GP3 server and sends messages via session1_client-GP3_server
 %socket.
@@ -10,18 +10,6 @@ function Experiment_TwoTones(varargin)
 % handle user pressing the stop experiment button in the main GUI
 % 5/14/2019 - Allow user to define event duration
 
-%% Parse varargin for duration
-if nargin == 0
-    baseline_dur = 10;
-    event1_dur = 18;
-    event2_dur = 10;
-elseif nargin == 3
-    baseline_dur = varargin{1};
-    event1_dur = varargin{2};
-    event2_dur = varargin{3};
-else
-    error('Requires either 0 or 3 input arguments for duration.');
-end
 
 %% Set-up client 1 connections
 % Create Client1-GP3 socket
@@ -33,34 +21,56 @@ Client1_SendReadyMsg(session1_client);
 %% Run Experiment
 run_count = 0;
 while 1
-    current_user_data_parsed = Client1_GetCurrentUserDataParsed(session1_client);
+    name_value_pairs = Client1_GetCurrentUserDataParsed(session1_client);
     
-    switch current_user_data_parsed{1}
+    switch name_value_pairs{1}
         case 'START'
-            % Retrieve the hand selected by user and convert to lowercase
-            ear = lower(current_user_data_parsed{2});
-            tone_freq = str2double(current_user_data_parsed{3});
-            tone_dur = str2double(current_user_data_parsed{4})/1000;        %convert from ms to s
+            % Retrieve the parameters sent in the start message
+            name_value_parsed = split(name_value_pairs(2:end),'-');
+            p_fieldnames = name_value_parsed(:,:,1);
+            p_values = name_value_parsed(:,:,2);
+            
+            % Handle missing field name pairs
+            stop_recording = 0;
+            for required_fieldname = {'TONEFREQ','TONEDUR','EAR','EVENT1DUR','EVENT2DUR','EVENT3DUR'}
+                if sum(strcmp(p_fieldnames,required_fieldname{1}))==0
+                    warning(['Missing fieldname ' required_fieldname{1} ' in START message to GP3.']);
+                    Client1_SendMessages(session1_client,'STOP_RECORDING');
+                    stop_recording = 1;
+                    break
+                end
+            end
+            if stop_recording == 1; continue; end
+            
+            % Create parameters data structure p
+            for i = 1:numel(p_fieldnames)
+                if sum(isletter(p_values{i})) == 0      % This checks if the value is numeric or only letters
+                    p.(p_fieldnames{i}) = str2double(p_values{i});
+                else
+                    p.(p_fieldnames{i}) = p_values{i};
+                end
+            end
+            
             Fs = 20100;         %sampling rate
             
             % Generate the Tone here
-            [y,Fs] = GenerateTone('constant',tone_freq,tone_dur,ear,Fs);
+            [y,Fs] = GenerateTone('constant',p.TONEFREQ,p.TONEDUR,p.EAR,Fs);
             
             run_count = run_count+1;
             fprintf(['\nRUN ' num2str(run_count)])
             flushinput(session1_client);    % clear buffer
             
             % Run Experiment Here
-            Client1_SendMessages(session1_client,'BASELINE');            
-            if Client1_PauseForDurationOrStopExperiment(session1_client,baseline_dur) == 1; continue; end % continues if this function returns 1 (meaning user pressed Stop Experiment button)
-            
-            soundsc(y,Fs)
             Client1_SendMessages(session1_client,'EVENT1');            
-            if Client1_PauseForDurationOrStopExperiment(session1_client,event1_dur) == 1; continue; end
+            if Client1_PauseForDurationOrStopExperiment(session1_client,p.EVENT1DUR) == 1; continue; end % continues if this function returns 1 (meaning user pressed Stop Experiment button)
             
             soundsc(y,Fs)
-            Client1_SendMessages(session1_client,'EVENT2');
-            if Client1_PauseForDurationOrStopExperiment(session1_client,event2_dur) == 1; continue; end
+            Client1_SendMessages(session1_client,'EVENT2');            
+            if Client1_PauseForDurationOrStopExperiment(session1_client,p.EVENT2DUR) == 1; continue; end
+            
+            soundsc(y,Fs)
+            Client1_SendMessages(session1_client,'EVENT3');
+            if Client1_PauseForDurationOrStopExperiment(session1_client,p.EVENT3DUR) == 1; continue; end
                                 
             Client1_SendMessages(session1_client,'STOP_RECORDING');   
         case 'DISCONNECT'

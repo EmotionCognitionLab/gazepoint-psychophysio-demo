@@ -13,7 +13,7 @@ y = sin(2*pi*tone_freq*T);  %sinuoisodal wave form for given frequency
 % Process tones
 y = y.*click_eliminator;        % remove edge clicks
 
-switch tone_type
+switch lower(tone_type)
     case 'constant'
         % no need to multiply waveform
     case 'looming'
@@ -21,7 +21,7 @@ switch tone_type
     case 'receding'
         y = flip(looming_multiplier).*y;
 end
-switch ear
+switch lower(ear)
     case 'both'
         % leave y alone
     case 'left'
