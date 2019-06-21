@@ -5,7 +5,6 @@ function SendMsgToGP3(session1_client, message)
 %
 %Author: Ringo Huang (ringohua@usc.edu)
 %Created: 8/8/2017
-%Last Update: 8/20/2017
 
 command = ['<SET ID="USER_DATA" VALUE="' message '" />'];
 fprintf(session1_client, command);

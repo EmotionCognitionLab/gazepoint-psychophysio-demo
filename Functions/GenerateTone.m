@@ -1,4 +1,9 @@
 function [y,Fs] = GenerateTone(tone_type,tone_freq,tone_dur,ear,Fs)
+% Generates sine wave tones based on user-specified configurations. Also
+% does automatic edge click removal.
+%
+% Author: Ringo Huang
+% Created on: 6/18/2019
 
 % Set up the audio wave
 Ts = 1/Fs;
@@ -8,7 +13,6 @@ looming_multiplier = [0:1/numel(T):1-1/numel(T)]';  %weighting to create looming
 click_eliminator = [0:1/200:1 ones(1,numel(T)-402) flip(0:1/200:1)]'; %weighting to eliminate edge clicking
 
 y = sin(2*pi*tone_freq*T);  %sinuoisodal wave form for given frequency
-
 
 % Process tones
 y = y.*click_eliminator;        % remove edge clicks
