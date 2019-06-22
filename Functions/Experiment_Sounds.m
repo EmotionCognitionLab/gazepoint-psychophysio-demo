@@ -1,22 +1,13 @@
-function Experiment_Sounds(varargin)
-%IADS Audio Presentation run on client 1
+function Experiment_Sounds
+% Experiment Script for the Sounds Task, run on a separate Matlab
+% session (client 1). Can play any .mp3 or .wav sound file found in a
+% stimulus folder defined by the user in the GUI
 %
-%Author: Ringo Huang (ringohua@usc.edu)
-%Created: 4/30/2019
+% Author: Ringo Huang (ringohua@usc.edu)
+% Created: 4/30/2019
 
 %% Addpath to the stimuli
 Experiment_AddPathToStimuli('Sounds');
-
-%% Parse varargin for duration
-if nargin == 0          % default
-    baseline_dur = 10;
-    postaudio_dur = 5;
-elseif nargin == 2      % user-defined
-    baseline_dur = varargin{1};
-    postaudio_dur = varargin{2};
-else
-    error('Requires either 0 or 2 input arguments for duration.');
-end
 
 %% Set-up client 1 connections
 % Create Client1-GP3 socket
@@ -28,18 +19,20 @@ Client1_SendReadyMsg(session1_client);
 %% Run Experiment
 run_count = 0;
 while 1
-    current_user_data = GetCurrentUserData(session1_client);
-    current_user_data_parsed = strsplit(current_user_data,'_');
-        
-    switch current_user_data_parsed{1}
-        case 'START'                       
-            % Retrieve the user-defined options and convert to lowercase
-            ear = lower(current_user_data_parsed{2});
-            audio = lower(current_user_data_parsed{3});
+    name_value_pairs = Client1_GetCurrentUserDataParsed(session1_client);
+    
+    switch name_value_pairs{1}
+        case 'START'
+            % Put name value pairs (experiment parameters) in a data
+            % structure p
+            [p, stop_recording] = Experiment_ReformatParametersToStructure(name_value_pairs, {'AUDIO','EAR','EVENT1DUR','EVENT2DUR'});        
+            if stop_recording == 1; continue; end   % stop recording returns 1 if a required fieldname is missing;
+            audio = lower(p.AUDIO);    % save audio filename to audio
             
-            % Underscores in audio filename were replaced with
-            % <UNDERSCORE>; Undo to get original
+            % Underscores and dashes in audio filename were replaced with
+            % <UNDERSCORE> and <DASH>; Undo to get original
             audio = regexprep(audio,'<underscore>','_');
+            audio = regexprep(audio,'<dash>','-');
             
             % Uppercase letters were preceded with <UPPER>; Remove the
             % <UPPER> from the audio filename, and capitalize the character
@@ -53,7 +46,7 @@ while 1
             
             if audio_info.NumChannels == 1
                 % For mono
-                switch ear
+                switch lower(p.EAR)
                     case 'left'
                         y = [y zeros(length(y),1)];
                     case 'right'
@@ -63,7 +56,7 @@ while 1
                 end
             else
                 % For stereo
-                switch ear
+                switch lower(p.EAR)
                     case 'left'
                         y = sum(y,2)/size(y,2); % convert y from stereo to mono
                         y = [y zeros(length(y),1)];
@@ -81,14 +74,14 @@ while 1
             
            	% Run Experiment Here
             Client1_SendMessages(session1_client,'BASELINE');            
-            if Client1_PauseForDurationOrStopExperiment(session1_client,baseline_dur) == 1; continue; end % continues if this function returns 1 (meaning user pressed Stop Experiment button)
+            if Client1_PauseForDurationOrStopExperiment(session1_client,p.EVENT1DUR) == 1; continue; end % continues if this function returns 1 (meaning user pressed Stop Experiment button)
             
             soundsc(y,Fs)       % play audio file
             Client1_SendMessages(session1_client,'AUDIO');            
             if Client1_PauseForDurationOrStopExperiment(session1_client,audio_dur) == 1; continue; end
             
             Client1_SendMessages(session1_client,'POST_AUDIO');
-            if Client1_PauseForDurationOrStopExperiment(session1_client,postaudio_dur) == 1; continue; end
+            if Client1_PauseForDurationOrStopExperiment(session1_client,p.EVENT2DUR) == 1; continue; end
                                 
             Client1_SendMessages(session1_client,'STOP_RECORDING'); 
             

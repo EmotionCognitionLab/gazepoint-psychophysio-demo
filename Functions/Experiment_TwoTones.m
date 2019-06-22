@@ -1,15 +1,9 @@
 function Experiment_TwoTones
-%This is the equivalent of the experiment script for a looming task that
-%connects to GP3 server and sends messages via session1_client-GP3_server
-%socket.
+% Experiment Script for the Two Tones Task, run on a separate Matlab
+% session (client 1)
 %
 %Author: Ringo Huang (ringohua@usc.edu)
-%Created: 4/30/2019
-%
-% 5/14/2019 - Implemented Client1_PauseForDurationOrStopExperiment to
-% handle user pressing the stop experiment button in the main GUI
-% 5/14/2019 - Allow user to define event duration
-
+%Created: 6/18/2019
 
 %% Set-up client 1 connections
 % Create Client1-GP3 socket
@@ -25,35 +19,13 @@ while 1
     
     switch name_value_pairs{1}
         case 'START'
-            % Retrieve the parameters sent in the start message
-            name_value_parsed = split(name_value_pairs(2:end),'-');
-            p_fieldnames = name_value_parsed(:,:,1);
-            p_values = name_value_parsed(:,:,2);
-            
-            % Handle missing field name pairs
-            stop_recording = 0;
-            for required_fieldname = {'TONEFREQ','TONEDUR','EAR','EVENT1DUR','EVENT2DUR','EVENT3DUR'}
-                if sum(strcmp(p_fieldnames,required_fieldname{1}))==0
-                    warning(['Missing fieldname ' required_fieldname{1} ' in START message to GP3.']);
-                    Client1_SendMessages(session1_client,'STOP_RECORDING');
-                    stop_recording = 1;
-                    break
-                end
-            end
-            if stop_recording == 1; continue; end
-            
-            % Create parameters data structure p
-            for i = 1:numel(p_fieldnames)
-                if sum(isletter(p_values{i})) == 0      % This checks if the value is numeric or only letters
-                    p.(p_fieldnames{i}) = str2double(p_values{i});
-                else
-                    p.(p_fieldnames{i}) = p_values{i};
-                end
-            end
-            
-            Fs = 20100;         %sampling rate
-            
+            % Put name value pairs (experiment parameters) in a data
+            % structure p
+            [p, stop_recording] = Experiment_ReformatParametersToStructure(name_value_pairs, {'TONEFREQ','TONEDUR','EAR','EVENT1DUR','EVENT2DUR','EVENT3DUR'});        
+            if stop_recording == 1; continue; end   % stop recording returns 1 if a required fieldname is missing;
+
             % Generate the Tone here
+            Fs = 20100;         %sampling rate
             [y,Fs] = GenerateTone('constant',p.TONEFREQ,p.TONEDUR,p.EAR,Fs);
             
             run_count = run_count+1;
