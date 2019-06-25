@@ -15,9 +15,10 @@ end
 
 timed_out = 0;
 [~, current_user_data] = RetrieveDataFromBuffer(session_client);
+disp(['Waiting for message - ' current_user_data])
 waitingForStartTimer = tic;
 while ~strcmpi(current_user_data, user_data_message)
-    disp(current_user_data)
+    disp(['Waiting for message - ' current_user_data])
     [~, current_user_data] = RetrieveDataFromBuffer(session_client);
     
     if toc(waitingForStartTimer) > time_out_dur
@@ -33,3 +34,5 @@ while ~strcmpi(current_user_data, user_data_message)
         break
     end
 end
+
+disp(['Message detected - ' current_user_data])

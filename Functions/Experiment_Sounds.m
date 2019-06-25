@@ -44,6 +44,9 @@ while 1
             [y, Fs] = audioread(audio);
             audio_dur = audio_info.Duration;
             
+            % Create audioplayer object for preloading
+            audio_obj = audioplayer(y, Fs);
+        
             if audio_info.NumChannels == 1
                 % For mono
                 switch lower(p.EAR)
@@ -73,14 +76,22 @@ while 1
             flushinput(session1_client);    % clear buffer
             
            	% Run Experiment Here
-            Client1_SendMessages(session1_client,'BASELINE');            
-            if Client1_PauseForDurationOrStopExperiment(session1_client,p.EVENT1DUR) == 1; continue; end % continues if this function returns 1 (meaning user pressed Stop Experiment button)
+            zero_time = tic;
+            Client1_SendMessages(session1_client,'BASELINE');
+            fprintf(['\nBaseline message sent - ' num2str(toc(zero_time))]);            
+            if Client1_PauseForDurationOrStopExperiment(session1_client,p.EVENT1DUR) == 1; continue; end % continues if this function returns 1 (meaning user pressed Stop Experiment button)  
+            %toc(zero_time)
+            fprintf(['\nEnd of baseline - ' num2str(toc(zero_time))]);
+            audio_obj.play;
+            fprintf(['\nSound out - ' num2str(toc(zero_time))]);
             
-            soundsc(y,Fs)       % play audio file
-            Client1_SendMessages(session1_client,'AUDIO');            
+            Client1_SendMessages(session1_client,'AUDIO');
+            fprintf(['\nAudio message sent - ' num2str(toc(zero_time))]);
             if Client1_PauseForDurationOrStopExperiment(session1_client,audio_dur) == 1; continue; end
             
+            
             Client1_SendMessages(session1_client,'POST_AUDIO');
+            disp(toc(zero_time));
             if Client1_PauseForDurationOrStopExperiment(session1_client,p.EVENT2DUR) == 1; continue; end
                                 
             Client1_SendMessages(session1_client,'STOP_RECORDING'); 
