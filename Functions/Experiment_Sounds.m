@@ -76,28 +76,30 @@ while 1
             flushinput(session1_client);    % clear buffer
             
            	% Run Experiment Here
-            zero_time = tic;
             Client1_SendMessages(session1_client,'BASELINE');
-            fprintf(['\nBaseline message sent - ' num2str(toc(zero_time))]);            
+            zero_time = tic;
             if Client1_PauseForDurationOrStopExperiment(session1_client,p.EVENT1DUR) == 1; continue; end % continues if this function returns 1 (meaning user pressed Stop Experiment button)  
-            %toc(zero_time)
-            fprintf(['\nEnd of baseline - ' num2str(toc(zero_time))]);
+            fprintf(['\nBaseline duration - ' num2str(toc(zero_time))]);   
+            
+            t=tic;
             audio_obj.play;
-            fprintf(['\nSound out - ' num2str(toc(zero_time))]);
+            fprintf(['\nAudio out delay - ' num2str(toc(t))]);
+
             
             Client1_SendMessages(session1_client,'AUDIO');
-            fprintf(['\nAudio message sent - ' num2str(toc(zero_time))]);
+            
+            zero_time = tic;
             if Client1_PauseForDurationOrStopExperiment(session1_client,audio_dur) == 1; continue; end
+            fprintf(['\nAudio duration - ' num2str(toc(zero_time))]);
             
-            
+            zero_time = tic;
             Client1_SendMessages(session1_client,'POST_AUDIO');
-            disp(toc(zero_time));
+            fprintf(['\nPost Audio duration - ' num2str(toc(zero_time))]);
             if Client1_PauseForDurationOrStopExperiment(session1_client,p.EVENT2DUR) == 1; continue; end
                                 
             Client1_SendMessages(session1_client,'STOP_RECORDING'); 
             
             pause(.1)
-            SendMessages(session1_client,'STOP_EYETRACKER');   
         case 'DISCONNECT'
             SendMsgToGP3(session1_client,'DISCONNECTED');
             break
@@ -108,17 +110,3 @@ end
 %% Clean up socket
 fprintf('\nDisconnecting session 1 socket...\n\n')
 CleanUpSocket(session1_client);
-end
-
-function current_user_data = GetCurrentUserData(session1_client)
-%scan data from buffer and parse the xml format
-dataReceived = fscanf(session1_client);
-split = strsplit(dataReceived,'"');
-current_user_data = split{end-1};
-end
-
-function SendMessages(session1_client,msg)
-%sends msg to gp3 server as well as prints message in command window
-fprintf(['\n' msg]);
-SendMsgToGP3(session1_client,msg);
-end

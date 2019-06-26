@@ -11,22 +11,12 @@ function stop_experiment = Client1_PauseForDurationOrStopExperiment(session1_cli
 start_time = tic;
 stop_experiment = 0;
 while toc(start_time) < duration
-    %t=tic;
     current_user_data_parsed = Client1_GetCurrentUserDataParsed(session1_client);
-    %fprintf(['\nGetCurrentUserDataParsed - ' num2str(toc(t))]);
-   % t=tic;
     if strcmp(current_user_data_parsed{1},'STOP') && strcmp(current_user_data_parsed{2},'EXPERIMENT') % if user presses the Stop Experiment button
         stop_experiment = 1;
         Client1_SendMessages(session1_client,'STOP_RECORDING');         % sends STOP_RECORDING message, which client 2 will receive and break from recording
         break
     end
-    %fprintf(['\nStrcmp - ' num2str(toc(t))]);
-    %t=tic;
     pause(0.001)
-    %fprintf(['\nPause - ' num2str(toc(t))])
 end
-%fprintf(['\nPauseDuration - ' num2str(toc(t))])
-fprintf(['\nPauseDuration - ' num2str(toc(start_time))])
-%t=tic;
-%flushinput(session1_client);
-%fprintf(['\nFlush - ' num2str(toc(t))])
+
