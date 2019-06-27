@@ -84,7 +84,6 @@ while 1
             t=tic;
             audio_obj.play;
             fprintf(['\nAudio out delay - ' num2str(toc(t))]);
-
             
             Client1_SendMessages(session1_client,'AUDIO');
             
