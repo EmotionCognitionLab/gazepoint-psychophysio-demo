@@ -13,7 +13,10 @@ Experiment_AddPathToStimuli('Sounds');
 % Create Client1-GP3 socket
 session1_client = Client1_ConnectToGP3;
 
-% Tell Client 2 that Client 1 is ready
+% Wait for Client2_Ready Message before proceeding
+Client_WaitForMessage(session1_client, 'Client2_Ready');
+
+% Tell Client 2 that Client 1 is also ready
 Client1_SendReadyMsg(session1_client);
 
 %% Run Experiment

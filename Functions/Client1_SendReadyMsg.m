@@ -12,7 +12,6 @@ function Client1_SendReadyMsg(session_client)
 
 SendMsgToGP3(session_client,'CLIENT1_READY');
 pause(.1);
-SendMsgToGP3(session_client,'CLIENT1_WAITING');
 
 fprintf('Client 1 is ready. Waiting for START_EXPERIMENT message from client 2...\n\n');
 
