@@ -30,7 +30,7 @@ app.session2_client = Client2_ConnectToGP3(app,'ProgressDialog',progress_dialog_
 
 % Launch background batch process to run the Experiment; Set up
 % connection between Experiment Client and GP3 server
-Client2_LaunchClient1Experiment(app,experiment_filename,'ProgressDialog',progress_dialog_state,'LaunchAsBatch','no','CreateLogFile','yes');
+Client2_LaunchClient1Experiment(app,experiment_filename,'ProgressDialog',progress_dialog_state,'LaunchAsBatch','yes','CreateLogFile','yes');
 
 % Configure data stream and output file header
 app = Client2_ConfigureDataStream(app,'ProgressDialog',progress_dialog_state);
