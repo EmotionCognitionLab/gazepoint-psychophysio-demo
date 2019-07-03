@@ -33,17 +33,17 @@ end
 
 %% Scan until match_message is received; connection times out after 60s
 time_start=tic;
-fprintf(['Receving data: Waiting for "' match_message '".\n']);
+fprintf(['Streaming data: Listening for "' match_message '" message.\n']);
 while  1
     dataReceived = fscanf(client);
     split = strsplit(dataReceived,'"');
     current_user_data = split{end-1};
     if strcmpi(current_user_data,match_message)
-        fprintf(['Success: Received "' match_message '".\n']);
+        fprintf(['Success: Received "' match_message '" message.\n']);
         break
     end
     if toc(time_start) > p.Results.TimeOutDuration
-        error(['Timed out: Failed to receive "' match_message '".\n'])
+        error(['Timed out: Failed to receive "' match_message '" message.\n'])
     end
     pause(.01);
 end

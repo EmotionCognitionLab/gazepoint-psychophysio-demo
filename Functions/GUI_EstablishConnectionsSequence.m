@@ -26,11 +26,13 @@ parse(p,app,experiment_filename,varargin{:});
 progress_dialog_state = p.Results.ProgressDialog;
 
 % Set up connection between GUI client and GP3 server
-app.session2_client = Client2_ConnectToGP3(app,'ProgressDialog',progress_dialog_state);
+app.session2_client = Client2_ConnectToGP3(app,...
+    'ProgressDialog',progress_dialog_state);
 
 % Launch background batch process to run the Experiment; Set up
 % connection between Experiment Client and GP3 server
-Client2_LaunchClient1Experiment(app,experiment_filename,'ProgressDialog',progress_dialog_state,'LaunchAsBatch','yes','CreateLogFile','yes');
+Client2_LaunchClient1Experiment(app,experiment_filename,...
+    'ProgressDialog',progress_dialog_state,'LaunchAsBatch','yes','CreateLogFile','yes');
 
 % Configure data stream and output file header
 app = Client2_ConfigureDataStream(app,'ProgressDialog',progress_dialog_state);
@@ -44,8 +46,8 @@ SendMsgToGP3(app.session2_client,'Client2_Ready');
 client1_message = 'CLIENT1_READY';
 if strcmp(progress_dialog_state,'on')
     progress_dlg = uiprogressdlg(app.UIFigure,'Message',...
-        ['Waiting for message, "' client1_message '" from client 1...'],...
-        'Indeterminate','on');
+        ['Launched client 1. Waiting for "' client1_message '" response.'...
+        ' This may take a minute...'], 'Indeterminate','on');
 end
 Client_WaitForMessage(app.session2_client,client1_message);
 if strcmp(progress_dialog_state,'on')

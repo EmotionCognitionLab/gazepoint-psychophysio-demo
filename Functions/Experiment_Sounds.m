@@ -28,7 +28,8 @@ while 1
         case 'START'
             % Put name value pairs (experiment parameters) in a data
             % structure p
-            [p, stop_recording] = Experiment_ReformatParametersToStructure(name_value_pairs, {'AUDIO','EAR','EVENT1DUR','EVENT2DUR'});        
+            [p, stop_recording] = Experiment_ReformatParametersToStructure(name_value_pairs, {'AUDIO','EAR','EVENT1DUR','EVENT2DUR'});
+            p.EAR
             if stop_recording == 1; continue; end   % stop recording returns 1 if a required fieldname is missing;
             audio = lower(p.AUDIO);    % save audio filename to audio
             
@@ -46,10 +47,7 @@ while 1
             audio_info = audioinfo(audio);
             [y, Fs] = audioread(audio);
             audio_dur = audio_info.Duration;
-            
-            % Create audioplayer object for preloading
-            audio_obj = audioplayer(y, Fs);
-        
+
             if audio_info.NumChannels == 1
                 % For mono
                 switch lower(p.EAR)
@@ -65,7 +63,7 @@ while 1
                 switch lower(p.EAR)
                     case 'left'
                         y = sum(y,2)/size(y,2); % convert y from stereo to mono
-                        y = [y zeros(length(y),1)];
+                        y = [y zeros(length(y),1)];                   
                     case 'right'
                         y = sum(y,2)/size(y,2); % convert y from stereo to mono
                         y = [zeros(length(y),1) y];
@@ -73,6 +71,9 @@ while 1
                         % don't need to do anything
                 end
             end
+            
+            % Create audioplayer object for preloading
+            audio_obj = audioplayer(y, Fs);
             
             run_count = run_count+1;
             fprintf(['\nRUN ' num2str(run_count)])
