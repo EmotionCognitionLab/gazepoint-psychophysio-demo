@@ -31,7 +31,7 @@ while  1
         break
     end
     if toc(time_start) > 60
-        error('Connection time out: could not connect to session 1 client.')
+        error('Connection timed out: could not connect to session 1 client.')
     end
     pause(.01);
 end

@@ -16,7 +16,7 @@ start_time = tic;
 % pause until buffer fills or timed_out_state == 1
 while app.session2_client.BytesAvailable == 0 && timed_out_state == 0
     if toc(start_time) > time_limit
-        fprintf('Warning: No data being streamed. Automatically stopping experiment.\n');
+        GUI_CommandWindowMessages('WarningEmptyBuffer');
         timed_out_state = 1;    % if time limit is exceeded, return 1
     end
     pause(0.01)                 % avoid polling continuously
