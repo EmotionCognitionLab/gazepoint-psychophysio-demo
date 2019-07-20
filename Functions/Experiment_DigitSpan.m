@@ -1,4 +1,4 @@
-function Experiment_DigitSpan(varargin)
+function Experiment_DigitSpan
 %This is the equivalent of the experiment script for a digitspan task that
 %connects to GP3 server and sends messages via session1_client-GP3_server
 %socket.
@@ -7,33 +7,23 @@ function Experiment_DigitSpan(varargin)
 % 5/14/2019 - Implemented Client1_PauseForDurationOrStopExperiment to
 % handle user pressing the stop experiment button in the main GUI
 % 5/14/2019 - Allow user to define event duration
+% 7/19/2019 - Reworked to implement all the new functions
 %
 % Author: Ringo Huang (ringohua@usc.edu)
 % Created: 5/15/2019
 
-%% Addpath of sub-dirs from the parent dir of this file
-addpath(genpath(fileparts(mfilename('fullpath'))));
 
-%% Parse varargin for duration
-if nargin == 0
-    baseline_dur = 10;
-    digit_dur = 1.5;
-    delay_dur = 3;
-    recall_dur = 15;
-elseif nargin == 4
-    baseline_dur = varargin{1};
-    digit_dur = varargin{2};
-    delay_dur = varargin{3};
-    recall_dur = varargin{4};
-else
-    error('Requires either 0 or 4 input arguments for duration.');
-end
+%% Addpath to the stimuli
+Experiment_AddPathToStimuli('DigitSpan');
 
 %% Set-up client 1 connections
 % Create Client1-GP3 socket
 session1_client = Client1_ConnectToGP3;
 
-% Tell Client 2 that Client 1 is ready
+% Wait for Client2_Ready Message before proceeding
+Client_WaitForMessage(session1_client, 'Client2_Ready');
+
+% Tell Client 2 that Client 1 is also ready
 Client1_SendReadyMsg(session1_client);
 
 %% Read in audio files
@@ -45,46 +35,58 @@ end
 %% Run Experiment
 run_count = 0;
 while 1
-    current_user_data_parsed = Client1_GetCurrentUserDataParsed(session1_client);
+    name_value_pairs = Client1_GetCurrentUserDataParsed(session1_client);
     
-    switch current_user_data_parsed{1}
+    switch name_value_pairs{1}
         case 'START'
-            % Retrieve the trial configuration from the user_data message            
-            trial_load = str2double(current_user_data_parsed{2});
+            % Put name value pairs (experiment parameters) in a data
+            % structure p
+            [p, stop_recording] = Experiment_ReformatParametersToStructure(name_value_pairs, {'LOAD','EAR','EVENT1DUR','EVENT3DUR','EVENT4DUR','DIGITINTERVAL'});
+            if stop_recording == 1; continue; end   % stop recording returns 1 if a required fieldname is missing;
             
             % Set up trial digit sequence
-            rng('Shuffle');
-            random_nums = Shuffle(1:9);
-            digits = random_nums(1:trial_load);
+            rng('Shuffle');     % new seed
+            random_nums = 1:9;
+            random_nums = random_nums(randperm(length(random_nums)));
+            digit_sequence = random_nums(1:p.LOAD);
             
             run_count = run_count+1;
             fprintf(['\nRUN ' num2str(run_count)])
-            flushinput(session1_client);    % clear buffer
-            
+            flushinput(session1_client);    % clear buffer         
 
             % Baseline
             Client1_SendMessages(session1_client,'BASELINE');
-            if Client1_PauseForDurationOrStopExperiment(session1_client,baseline_dur) == 1; continue; end % continues if this function returns 1 (meaning user pressed Stop Experiment button)
+            zero_time = tic;
+            if Client1_PauseForDurationOrStopExperiment(session1_client,p.EVENT1DUR) == 1; continue; end % continues if this function returns 1 (meaning user pressed Stop Experiment button)
+            fprintf(['\nBaseline duration - ' num2str(toc(zero_time))]);
             
             % Encoding
             Client1_SendMessages(session1_client,'ENCODING');
-            for digit_num = 1:numel(digits)              
-                sound(y{digits(digit_num)},Fs{digits(digit_num)});
-                if digit_num < numel(digits)
-                    if Client1_PauseForDurationOrStopExperiment(session1_client,digit_dur) == 1; continue; end  %ensure 1.5s between digits except last digit
+            for digit_num = 1:numel(digit_sequence)              
+                sound(y{digit_sequence(digit_num)},Fs{digit_sequence(digit_num)});
+                if digit_num < numel(digit_sequence)
+                    zero_time = tic;
+                    if Client1_PauseForDurationOrStopExperiment(session1_client,p.DIGITINTERVAL) == 1; continue; end  %ensure 1.5s between digits except last digit
+                    fprintf(['\nDigit interval - ' num2str(toc(zero_time))]);
                 end
             end
 
             % Delay
             Client1_SendMessages(session1_client,'DELAY');
-            if Client1_PauseForDurationOrStopExperiment(session1_client,delay_dur) == 1; continue; end
+            zero_time = tic;
+            if Client1_PauseForDurationOrStopExperiment(session1_client,p.EVENT3DUR) == 1; continue; end
+            fprintf(['\nDelay duration - ' num2str(toc(zero_time))]);
             
             % Recall
             sound(yg,Fsg)
             Client1_SendMessages(session1_client,'RECALL');
-            if Client1_PauseForDurationOrStopExperiment(session1_client,recall_dur) == 1; continue; end
-                                
+            zero_time = tic;
+            if Client1_PauseForDurationOrStopExperiment(session1_client,p.EVENT4DUR) == 1; continue; end
+            fprintf(['\nRecall duration - ' num2str(toc(zero_time))]);
+            
             Client1_SendMessages(session1_client,'STOP_RECORDING');   
+            
+            pause(.1)
         case 'DISCONNECT'
             Client1_SendMessages(session1_client,'DISCONNECTED');   %confirm disconnected
             break

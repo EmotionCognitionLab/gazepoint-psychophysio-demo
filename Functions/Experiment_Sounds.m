@@ -29,7 +29,6 @@ while 1
             % Put name value pairs (experiment parameters) in a data
             % structure p
             [p, stop_recording] = Experiment_ReformatParametersToStructure(name_value_pairs, {'AUDIO','EAR','EVENT1DUR','EVENT2DUR'});
-            p.EAR
             if stop_recording == 1; continue; end   % stop recording returns 1 if a required fieldname is missing;
             audio = lower(p.AUDIO);    % save audio filename to audio
             
@@ -80,28 +79,29 @@ while 1
             flushinput(session1_client);    % clear buffer
             
            	% Run Experiment Here
+            % Baseline
             Client1_SendMessages(session1_client,'BASELINE');
             zero_time = tic;
             if Client1_PauseForDurationOrStopExperiment(session1_client,p.EVENT1DUR) == 1; continue; end % continues if this function returns 1 (meaning user pressed Stop Experiment button)  
             fprintf(['\nBaseline duration - ' num2str(toc(zero_time))]);   
             
+            % Audio
             t=tic;
             audio_obj.play;
             fprintf(['\nAudio out delay - ' num2str(toc(t))]);
-            
-            Client1_SendMessages(session1_client,'AUDIO');
-            
+                        
+            Client1_SendMessages(session1_client,'AUDIO');           
             zero_time = tic;
             if Client1_PauseForDurationOrStopExperiment(session1_client,audio_dur) == 1; continue; end
             fprintf(['\nAudio duration - ' num2str(toc(zero_time))]);
             
-            zero_time = tic;
+            % Post-Audio
             Client1_SendMessages(session1_client,'POST_AUDIO');
+            zero_time = tic;
             fprintf(['\nPost Audio duration - ' num2str(toc(zero_time))]);
             if Client1_PauseForDurationOrStopExperiment(session1_client,p.EVENT2DUR) == 1; continue; end
                                 
-            Client1_SendMessages(session1_client,'STOP_RECORDING'); 
-            
+            Client1_SendMessages(session1_client,'STOP_RECORDING');            
             pause(.1)
         case 'DISCONNECT'
             SendMsgToGP3(session1_client,'DISCONNECTED');
