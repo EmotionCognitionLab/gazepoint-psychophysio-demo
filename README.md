@@ -1,14 +1,20 @@
 # gazepoint-psychophysio-demo
 A series of pupillometry experiments using Gazepoint GP3 eye-tracking 
-hardware. This toolbox provides a convenient way to iterate through 
-variations in simple pupillometry experiment to make informed design decisions. 
-
-For example, if you want to know which of 5 negative auditory stimuli elicits the greatest pupillary response before
-deciding on the one the include in your study, you may quickly pilot these
-sounds using the Sounds App.
+hardware. These apps offer a convenient way to conduct simple pupillometry experiments.
 
 The apps in this toolbox includes a user interface that connects/disconnects and 
 starts/stops control of the GP3 eye-tracker and the experiment. The code for the user interface and back-end are Matlab-based.
+
+## Use Cases
+I've personally used these apps to demo pupillometry experiments in a class lecture.
+These apps are also useful when designing new pupillometry studies. I often stress over small design details, but with these apps, you can quickly iterate through variations in your experiments and observe how they affect the pupillary response.
+
+Some ponderings I've had when designing studies:
+- *I want to know the duration for the pupillary response to return to baseline levels after an audio is presented.* This could be important in choosing a sufficiently long inter-stimulus interval so that the pupillary response from a prior stimuli does not interfere with the next. To figure this out, simply load in your audio file in the Sounds App and pilot a couple people. 
+- *I want to know whether the pitch of an auditory cue affects older and younger adults differently.* Use the Two Tones App to compare the pupillary response of older versus younger adults using different pitches.
+- *I have several audio files and want to know which elicits the greatest pupillary response.* Use the Sounds App to compare pupillary responses to each audio file.
+
+This could be a possible approach to systematically test changes to your experiments to help you make informed design decisions.
 
 ## Hardware
 1. Gazepoint GP3 Eye-tracker and its provided accessories
