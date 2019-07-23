@@ -19,10 +19,15 @@ parse(p,client,match_message,varargin{:});
 % Empty buffer then pause for a moment; if send_data is enabled, client
 % buffer will start filling up; if not, bytesavailable will remain 0
 flushinput(client)
-pause(0.1)
+fill_up_dur = 1;        % give buffer up to 1 second to start filling with data
+start_time = tic;
+while toc(start_time) < fill_up_dur && client.BytesAvailable == 0
+end
+
 if client.BytesAvailable > 0
     send_data_enabled_already = 1;
 elseif client.BytesAvailable == 0
+    client.BytesAvailable
     send_data_enabled_already = 0;
 end
 

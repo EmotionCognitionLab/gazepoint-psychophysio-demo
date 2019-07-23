@@ -25,7 +25,7 @@ while 1
         case 'START'
            % Put name value pairs (experiment parameters) in a data
             % structure p
-            [p, stop_recording] = Experiment_ReformatParametersToStructure(name_value_pairs, {'AUDIO','EAR','EVENT1DUR','EVENT3DUR','TONEFREQ','TONEDUR','TONETYPE'});
+            [p, stop_recording] = Experiment_ReformatParametersToStructure(name_value_pairs, {'EAR','EVENT1DUR','EVENT3DUR','TONEFREQ','TONEDUR','TONETYPE'});
             if stop_recording == 1; continue; end   % stop recording returns 1 if a required fieldname is missing;          
             Fs = 20100; %Tone sampling rate
             
@@ -53,7 +53,7 @@ while 1
             % Post-audio
             Client1_SendMessages(session1_client,'POST_AUDIO');
             zero_time = tic;
-            if Client1_PauseForDurationOrStopExperiment(session1_client,p.EVENT2DUR) == 1; continue; end
+            if Client1_PauseForDurationOrStopExperiment(session1_client,p.EVENT3DUR) == 1; continue; end
             fprintf(['\nPost-Audio duration - ' num2str(toc(zero_time))]);
             
             Client1_SendMessages(session1_client,'STOP_RECORDING');
