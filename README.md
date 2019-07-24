@@ -6,14 +6,14 @@ The apps in this toolbox includes a user interface that connects/disconnects and
 starts/stops control of the GP3 eye-tracker and the experiment. The code for the user interface and back-end are Matlab-based.
 
 ## Use Cases
-I've personally used these apps to demo pupillometry experiments in a class lecture.
+I've personally used these apps in a class lecture to demonstrate to students how a pupillometry experiments can be conducted. 
 These apps are also useful when designing new pupillometry studies. I often stress over small design details, but with these apps, you can quickly iterate through variations in your experiments and observe how they affect the pupillary response.
 
 Some of my random ponderings:
-- **I want to know the duration for the pupillary response to return to baseline levels after an audio is presented.** This could be important in choosing a sufficiently long inter-stimulus interval so that the pupillary response from a prior stimuli does not interfere with the next. To figure this out, simply load in your audio file in the Sounds App and pilot a couple people. 
-- **I want to know whether the pitch of an auditory cue affects older and younger adults differently.** Use the Two Tones App to compare the pupillary response of older versus younger adults using different pitches.
+- **How long does it take for a pupillary response to a certain audio to return to baseline levels?** This could be important to know in choosing a sufficiently long inter-stimulus interval so that the pupillary response from a prior stimuli does not interfere with the next. To figure this out, pilot your audio file with the Sounds App, noting the duration it takes for the pupillary response to return to baseline.
+- **Does the same auditory cue affect older and younger adults differently?** Use the Two Tones App to compare the pupillary response of older versus younger adults to tones of varying pitches and/or durations.
 - **I have several audio files and want to know which elicits the greatest pupillary response.** Use the Sounds App to compare pupillary responses to each audio file.
-- **I want to know the optimal inter-digit interval in a digit span task.** Use the Digit Span app and modify the Digit Interval to see how it affects the pupillary response during the encoding period.
+- **What is the optimal inter-digit interval in a digit span task?** Use the Digit Span app and vary the Digit Interval to see how it affects the pupillary response during the encoding period.
 
 This could be a possible approach to systematically test changes to your experiments to help you make informed design decisions.
 
