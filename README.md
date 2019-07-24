@@ -39,7 +39,7 @@ The eye-tracker should be placed on a table about 20 cm in front of the fixation
 
 ## Usage
 Run GazepointDemo_menu.mlapp to launch the main menu. Select from the list of experiments that you want to run.
-![Main Menu](/AppFiles/MainMenu.png)
+![Main Menu](AppFiles/MainMenu.png)
 
 ### Sounds App
 Presents any audio file and measures a participant's pupillary response to the auditory stimuli.
