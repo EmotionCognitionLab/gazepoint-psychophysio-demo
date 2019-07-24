@@ -42,6 +42,8 @@ Run GazepointDemo_menu.mlapp to launch the main menu. Select the experiment you 
 
 ![Main Menu](AppFiles/MainMenu.PNG)
 
+Return to the main menu by pressing the return ![Return](AppFiles/arrow_back.png) button.
+
 ### Sounds App
 Presents any audio file and measures a participant's pupillary response to the auditory stimuli.
 
