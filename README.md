@@ -38,7 +38,8 @@ Attach some sort of fixation point at eye-level. This could be a print-out of a 
 The eye-tracker should be placed on a table about 20 cm in front of the fixation point. The subject should sit about 80 cm in front of the fixation cross and 60 cm in front of the eye-tracker.  Acceptable operating distance between the participant and the eye-tracker is 50 cm to 80 cm. 
 
 ## Usage
-Run GazepointDemo_menu.mlapp to launch the main menu. Select from the list of experiments that you want to run.
+Run GazepointDemo_menu.mlapp to launch the main menu. Select the experiment you want to run from the list:
+
 ![Main Menu](AppFiles/MainMenu.PNG)
 
 ### Sounds App
@@ -49,6 +50,8 @@ Configuration Options:
 - The ear that the audio is presented
 - Durations of the baseline and post-audio periods
 
+![Sounds App](AppFiles/Sounds.PNG)
+
 ### Two Tones App
 Presents two tones as cues for participant to perform certain tasks. Records participant's pupillary response during baseline, task event, and post-task event. The task can be anything that does not require participant to avert gaze (e.g., a isometric exercise or cold pressor task).
 
@@ -56,6 +59,8 @@ Configuration Options:
 * The frequency (Hz) and duration (s) of the two tones
 * The ear that the audio is presented
 * Durations of the baseline, task, and post-task periods
+
+![Two Tones App](AppFiles/TwoTones.PNG)
 
 ### Looming App
 Presents a looming, receding, or constant tone to the participant.
@@ -66,6 +71,8 @@ Configuration Options:
 * The ear that the audio is presented
 * Durations of the baseline, task, and post-task periods
 
+![Looming App](AppFiles/Looming.PNG)
+
 ### Digit Span App
 Presents a string of digits to the participant. Participant recalls verbally after a delay.
 
@@ -73,3 +80,5 @@ Configuration Options:
 * Trial load or the number of digits presented
 * Durations for the baseline, delay, and recall periods
 * Interval between the tone onset of each digit
+
+![Digit Span App](AppFiles/DigitSpan.PNG)
