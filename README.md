@@ -38,7 +38,8 @@ Attach some sort of fixation point at eye-level. This could be a print-out of a 
 The eye-tracker should be placed on a table about 20 cm in front of the fixation point. The subject should sit about 80 cm in front of the fixation cross and 60 cm in front of the eye-tracker.  Acceptable operating distance between the participant and the eye-tracker is 50 cm to 80 cm. 
 
 ## Usage
-These apps are simple pupillometry experiments with some configurable options.
+Run GazepointDemo_menu.mlapp to launch the main menu. Select from the list of experiments that you want to run.
+![Main Menu](/AppFiles/MainMenu.png)
 
 ### Sounds App
 Presents any audio file and measures a participant's pupillary response to the auditory stimuli.
