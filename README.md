@@ -10,9 +10,9 @@ I've personally used these apps to demo pupillometry experiments in a class lect
 These apps are also useful when designing new pupillometry studies. I often stress over small design details, but with these apps, you can quickly iterate through variations in your experiments and observe how they affect the pupillary response.
 
 Some ponderings I've had when designing studies:
-- *I want to know the duration for the pupillary response to return to baseline levels after an audio is presented.* This could be important in choosing a sufficiently long inter-stimulus interval so that the pupillary response from a prior stimuli does not interfere with the next. To figure this out, simply load in your audio file in the Sounds App and pilot a couple people. 
-- *I want to know whether the pitch of an auditory cue affects older and younger adults differently.* Use the Two Tones App to compare the pupillary response of older versus younger adults using different pitches.
-- *I have several audio files and want to know which elicits the greatest pupillary response.* Use the Sounds App to compare pupillary responses to each audio file.
+- **I want to know the duration for the pupillary response to return to baseline levels after an audio is presented.** This could be important in choosing a sufficiently long inter-stimulus interval so that the pupillary response from a prior stimuli does not interfere with the next. To figure this out, simply load in your audio file in the Sounds App and pilot a couple people. 
+- **I want to know whether the pitch of an auditory cue affects older and younger adults differently.** Use the Two Tones App to compare the pupillary response of older versus younger adults using different pitches.
+- **I have several audio files and want to know which elicits the greatest pupillary response.** Use the Sounds App to compare pupillary responses to each audio file.
 
 This could be a possible approach to systematically test changes to your experiments to help you make informed design decisions.
 
@@ -44,9 +44,9 @@ These apps are simple pupillometry experiments with some configurable options.
 Presents any audio file and measures a participant's pupillary response to the auditory stimuli.
 
 Configuration Options:
-* Any audio file (.wav or .mp3) - to load in your audio file, put your audio in the ../Stimuli/Sounds sub-folder and click the refresh button next to the selec audio file drop-down menu.
-* The ear that the audio is presented
-* Durations of the baseline and post-audio periods
+- Any audio file (.wav or .mp3) - to load in your audio file, put your audio in the ../Stimuli/Sounds sub-folder and click the refresh button next to the selec audio file drop-down menu.
+- The ear that the audio is presented
+- Durations of the baseline and post-audio periods
 
 ### Two Tones App
 Presents two tones as cues for participant to perform certain tasks. Records participant's pupillary response during baseline, task event, and post-task event. The task can be anything that does not require participant to avert gaze (e.g., a isometric exercise or cold pressor task).
