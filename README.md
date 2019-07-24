@@ -38,11 +38,17 @@ Attach some sort of fixation point at eye-level. This could be a print-out of a 
 The eye-tracker should be placed on a table about 20 cm in front of the fixation point. The subject should sit about 80 cm in front of the fixation cross and 60 cm in front of the eye-tracker.  Acceptable operating distance between the participant and the eye-tracker is 50 cm to 80 cm. 
 
 ## Usage
-Run GazepointDemo_menu.mlapp to launch the main menu. Select the experiment you want to run from the list:
+1. Launch the Gazepoint Control program.
+2. Run GazepointDemo_menu.mlapp to launch the main menu. Select the experiment you want to run from the list:
 
 ![Main Menu](AppFiles/MainMenu.PNG)
 
-Return to the main menu by pressing the return ![Return](AppFiles/arrow_back.png) button.
+3. After launching your selected experiment, modify your experiment configuration if you wish to do so.
+4. Establish connections with the Gazepoint Control program (press the "connect" button).
+5. When you and your participant are ready, start the experiment run (press "start experiment").
+6. If you wish to cancel experiment prematurely, press the "stop experiment" button (note that this is a little buggy if you do so while sound out is playing).
+7. After completing the experiment run, you can find the raw data files saved in the output folder. You can also interact with the plot by hovering over the axis and using the Matlab plotting toolbar.
+8. Once you're finished using the app, close the window or or press the "return" back arrow to return to the main menu.
 
 ### Sounds App
 Presents any audio file and measures a participant's pupillary response to the auditory stimuli.
