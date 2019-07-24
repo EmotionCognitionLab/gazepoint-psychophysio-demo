@@ -58,5 +58,6 @@ end
 app.ConnectButton.Enable = 'off';
 app.StartExperimentButton.Enable = 'on';
 app.DisconnectButton.Enable = 'on';
+app.ReturnButton.Enable = 'off';
 figure(app.UIFigure);               % Brings UI back to the front
 fprintf('Connections Established: Ready to start experiment.\n');

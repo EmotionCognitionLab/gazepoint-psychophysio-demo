@@ -23,7 +23,7 @@ while 1
     switch name_value_pairs{1}
         case 'START'
             % Put name value pairs (experiment parameters) in a data
-            % structure p
+            % structure po
             [p, stop_recording] = Experiment_ReformatParametersToStructure(name_value_pairs, {'TONEFREQ','TONEDUR','EAR','EVENT1DUR','EVENT2DUR','EVENT3DUR'});        
             if stop_recording == 1; continue; end   % stop recording returns 1 if a required fieldname is missing;
 
